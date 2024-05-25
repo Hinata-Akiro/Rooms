@@ -19,8 +19,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.setGlobalPrefix('api/v1');
   const config = new DocumentBuilder()
-    .setTitle('Task Management Service')
-    .setDescription('Task Management Service api documentation')
+    .setTitle('Rooms Service')
+    .setDescription('Rooms Service api documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
