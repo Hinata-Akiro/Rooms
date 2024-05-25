@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoomsRepository } from './rooms.repository';
 import { QueriesService } from 'src/queries/queries.service';
 import {
   PaginationDto,
@@ -8,13 +7,14 @@ import {
   PaginationResultDto,
 } from 'src/common/dto';
 import { Rooms } from './entities';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoomsService {
   constructor(
-    @InjectRepository(RoomsRepository)
-    private roomsRepository: RoomsRepository,
     private readonly queriesService: QueriesService,
+    @InjectRepository(Rooms)
+    private roomsRepository: Repository<Rooms>,
   ) {}
 
   async getRooms(
@@ -59,7 +59,7 @@ export class RoomsService {
       { name: 'Brainstorming Room T', capacity: 12, userId: 4 },
     ];
 
-    const result = await this.roomsRepository.saveRooms(rooms);
+    const result = await this.roomsRepository.save(rooms);
     console.log(result);
   }
 }

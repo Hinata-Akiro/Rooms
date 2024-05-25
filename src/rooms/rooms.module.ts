@@ -4,10 +4,10 @@ import { QueriesModule } from 'src/queries/queries.module';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
 import { RoomsRepository } from './rooms.repository';
-import { TypeOrmExModule } from 'src/typeorm-extension';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmExModule.forCustomRepository([Rooms]), QueriesModule],
+  imports: [TypeOrmModule.forFeature([Rooms]), QueriesModule],
   providers: [RoomsService, RoomsRepository],
   controllers: [RoomsController],
 })
