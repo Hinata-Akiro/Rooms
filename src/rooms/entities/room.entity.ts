@@ -1,6 +1,7 @@
-import { BaseTable } from 'src/base';
-import { Column } from 'typeorm';
+import { BaseTable } from '../../base';
+import { Column, Entity } from 'typeorm';
 
+@Entity({ name: 'Rooms' })
 export class Rooms extends BaseTable {
   @Column({ type: 'varchar', length: 100 })
   name: string;

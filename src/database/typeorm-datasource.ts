@@ -1,12 +1,13 @@
 import * as path from 'path';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { DATABASE_URL } from './config';
+import { Rooms } from '../rooms/entities';
 
 export const options: DataSourceOptions = {
   type: 'postgres',
   url: DATABASE_URL,
-  entities: [path.join(__dirname, '/../**/*.entity{.ts,.js}')],
-  migrations: [path.join(__dirname, '/../**/*.migration{.ts,.js}')],
+  entities: [Rooms],
+  migrations: [path.join(__dirname, '/../**/migrations/*{.ts,.js}')],
   synchronize: false,
   // logging: true,
   // ssl: {

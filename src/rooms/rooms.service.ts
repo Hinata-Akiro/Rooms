@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueriesService } from 'src/queries/queries.service';
 import {
+  FilterDto,
   PaginationDto,
   PaginationMetaDataDto,
   PaginationResultDto,
+  SortDto,
 } from 'src/common/dto';
 import { Rooms } from './entities';
 import { Repository } from 'typeorm';
@@ -19,11 +21,16 @@ export class RoomsService {
 
   async getRooms(
     paginationDto: PaginationDto,
+    filters?: FilterDto[],
+    sortD?: SortDto[],
   ): Promise<PaginationResultDto<Rooms>> {
-    let query = this.roomsRepository.createQueryBuilder('room');
-
-    query = this.queriesService.applyFilters(query, paginationDto);
-    query = this.queriesService.applySorting(query, paginationDto);
+    let query = this.roomsRepository.createQueryBuilder('rooms');
+    if (filters) {
+      query = this.queriesService.applyFilters(query, filters);
+    }
+    if (sortD) {
+      query = this.queriesService.applySorting(query, sortD);
+    }
     query = this.queriesService.applyPagination(query, paginationDto);
 
     const [rooms, itemCount] = await query.getManyAndCount();
@@ -32,7 +39,13 @@ export class RoomsService {
       itemCount,
     });
 
-    return new PaginationResultDto(rooms, meta);
+    const roomsQuery = new PaginationResultDto(rooms, meta);
+
+    if (roomsQuery.data.length === 0) {
+      return roomsQuery;
+    } else {
+      return roomsQuery;
+    }
   }
 
   async seed() {

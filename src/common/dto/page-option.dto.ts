@@ -1,8 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
-import { FilterDto } from './filter.dto';
-import { SortDto } from './sort.dto';
 
 export class PaginationDto {
   @ApiPropertyOptional({
@@ -31,22 +29,6 @@ export class PaginationDto {
   @Max(50)
   @IsOptional()
   readonly limit?: number = 10;
-
-  @ApiPropertyOptional({
-    description: 'Filters to apply',
-    type: [FilterDto],
-    example: [{ field: 'name', operator: 'like', value: 'Room' }],
-  })
-  @IsOptional()
-  filters: FilterDto[];
-
-  @ApiPropertyOptional({
-    description: 'Sorting criteria',
-    type: [SortDto],
-    example: [{ field: 'name', order: 'ASC' }],
-  })
-  @IsOptional()
-  sort: SortDto[];
 
   get skip(): number {
     return (this.page - 1) * this.limit;

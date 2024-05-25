@@ -1,20 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
 
 export class SortDto {
-  @ApiProperty({
-    description: 'The field to sort by',
-    example: 'name',
-  })
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   field: string;
 
-  @ApiProperty({
-    description: 'The sort order',
-    enum: ['ASC', 'DESC'],
-    example: 'ASC',
-  })
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   @IsIn(['ASC', 'DESC'])
   order: 'ASC' | 'DESC';

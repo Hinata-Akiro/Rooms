@@ -1,33 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationDto } from 'src/common/dto';
+import { FilterDto, PaginationDto, SortDto } from 'src/common/dto';
 import { Filters } from 'src/common/enum';
 import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QueriesService {
-  applyPagination<T>(
-    qb: SelectQueryBuilder<T>,
+  public applyPagination<T>(
+    queryBuilder: SelectQueryBuilder<T>,
     paginationDto: PaginationDto,
   ): SelectQueryBuilder<T> {
     const { page, limit } = paginationDto;
-    qb.skip((page - 1) * limit).take(limit);
-    return qb;
+    queryBuilder.skip((page - 1) * limit).take(limit);
+    return queryBuilder;
   }
 
-  applyFilters<T>(
-    qb: SelectQueryBuilder<T>,
-    paginationData: PaginationDto,
+  public applyFilters<T>(
+    queryBuilder: SelectQueryBuilder<T>,
+    filters: FilterDto[],
   ): SelectQueryBuilder<T> {
-    const { filters } = paginationData;
     filters.forEach((filter) => {
       const { field, operator, value } = filter;
-      this.addFilterCondition(qb, field, operator, value);
+      console.log(queryBuilder);
+      this.addFilterCondition(queryBuilder, field, operator, value);
     });
-    return qb;
+    return queryBuilder;
+  }
+
+  public applySorting<T>(
+    queryBuilder: SelectQueryBuilder<T>,
+    sort: SortDto[],
+  ): SelectQueryBuilder<T> {
+    sort.forEach((s) => {
+      queryBuilder.addOrderBy(`"${queryBuilder.alias}"."${s.field}"`, s.order);
+    });
+    return queryBuilder;
   }
 
   private addFilterCondition<T>(
-    qb: SelectQueryBuilder<T>,
+    queryBuilder: SelectQueryBuilder<T>,
     field: string,
     operator: Filters,
     value: any,
@@ -35,33 +45,33 @@ export class QueriesService {
     const condition = this.getConditionString(field, operator);
     const parameters = this.getConditionParameters(field, operator, value);
 
-    qb.andWhere(condition, parameters);
+    queryBuilder.andWhere(condition, parameters);
   }
 
   private getConditionString(field: string, operator: Filters): string {
     switch (operator) {
       case Filters.EQUALS:
-        return `${field} = :${field}`;
+        return `"${field}" = :${field}`;
       case Filters.NOT:
-        return `${field} != :${field}`;
+        return `"${field}" != :${field}`;
       case Filters.GT:
-        return `${field} > :${field}`;
+        return `"${field}" > :${field}`;
       case Filters.GTE:
-        return `${field} >= :${field}`;
+        return `"${field}" >= :${field}`;
       case Filters.LT:
-        return `${field} < :${field}`;
+        return `"${field}" < :${field}`;
       case Filters.LTE:
-        return `${field} <= :${field}`;
+        return `"${field}" <= :${field}`;
       case Filters.LIKE:
-        return `${field} LIKE :${field}`;
+        return `"${field}" LIKE :${field}`;
       case Filters.IN:
-        return `${field} IN (:...${field})`;
+        return `"${field}" IN (:...${field})`;
       case Filters.NOT_IN:
-        return `${field} NOT IN (:...${field})`;
+        return `"${field}" NOT IN (:...${field})`;
       case Filters.IS_NULL:
-        return `${field} IS NULL`;
+        return `"${field}" IS NULL`;
       case Filters.IS_NOT_NULL:
-        return `${field} IS NOT NULL`;
+        return `"${field}" IS NOT NULL`;
       default:
         throw new Error(`Unsupported operator: ${operator}`);
     }
@@ -84,16 +94,5 @@ export class QueriesService {
       default:
         return { [field]: value };
     }
-  }
-
-  applySorting<T>(
-    qb: SelectQueryBuilder<T>,
-    paginationData: PaginationDto,
-  ): SelectQueryBuilder<T> {
-    const { sort } = paginationData;
-    sort.forEach((s) => {
-      qb.addOrderBy(`${qb.alias}.${s.field}`, s.order);
-    });
-    return qb;
   }
 }
