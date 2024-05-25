@@ -8,11 +8,11 @@ export const options: DataSourceOptions = {
   url: DATABASE_URL,
   entities: [Rooms],
   migrations: [path.join(__dirname, '/../**/migrations/*{.ts,.js}')],
-  synchronize: false,
-  // logging: true,
-  // ssl: {
-  //   rejectUnauthorized: false,
-  // },
+  synchronize: true,
+  logging: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
 
 export const dataSource: DataSource = new DataSource(options);

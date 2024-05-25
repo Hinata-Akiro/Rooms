@@ -44,9 +44,4 @@ export class RoomsController {
 
     return this.roomsService.getRooms(paginationDto, parsedFilters, parsedSort);
   }
-
-  @Get('seed')
-  async seedRoom() {
-    return this.roomsService.seed();
-  }
 }
