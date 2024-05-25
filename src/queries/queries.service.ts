@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FilterDto, PaginationDto, SortDto } from 'src/common/dto';
-import { Filters } from 'src/common/enum';
+import { Filters } from '../common/enum';
 import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
@@ -20,7 +20,6 @@ export class QueriesService {
   ): SelectQueryBuilder<T> {
     filters.forEach((filter) => {
       const { field, operator, value } = filter;
-      console.log(queryBuilder);
       this.addFilterCondition(queryBuilder, field, operator, value);
     });
     return queryBuilder;

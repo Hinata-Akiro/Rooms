@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoomsService } from './rooms.service';
-import { PaginationDto, FilterDto, SortDto } from 'src/common/dto';
+import { PaginationDto, FilterDto, SortDto } from '../common/dto';
 
 @ApiTags('rooms')
 @Controller('rooms')
@@ -42,7 +42,6 @@ export class RoomsController {
       throw new BadRequestException('Invalid JSON format for filters or sort');
     }
 
-    console.log(parsedFilters, parsedSort);
     return this.roomsService.getRooms(paginationDto, parsedFilters, parsedSort);
   }
 
