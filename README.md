@@ -7,7 +7,9 @@ This project provides a utility module for adding pagination, filtering, and sor
   - [Installation](#installation)
   - [Environment configuration](#environment-configuration)
   - [Running the app](#running-the-app)
+  - [Live Link](#live-link)
   - [Swagger Doc](#swagger-doc)
+  - [PostMan Doc](#postman-doc)
 - [API Endpoints](#api-endpoints)
   - [Rooms Endpoints](#rooms-endpoints)
     - [Get Rooms](#get-rooms)
@@ -45,11 +47,20 @@ $ yarn run start:dev
 # production mode
 $ yarn run start:prod
 ```
-### Swagger Doc
-   ```bash
-     http://localhost:3000/api/docs
+
+### Live Link
+   ```plaintext
+     [live-link](https://rooms-2jb4.onrender.com/api/v1)
    ```
 
+### Swagger Doc
+   ```bash
+     http://localhost:3000/api/docs or https://rooms-2jb4.onrender.com/api/docs
+   ```
+### PostMan Doc
+   ```bash
+    https://documenter.getpostman.com/view/28059866/2sA3QqhYvw
+   ```
 ## Test
 
 ```bash
@@ -67,5 +78,54 @@ $ yarn run test
 
 **Description:** get all rooms.
 
+**Request Query:**
+
+```json
+
+  "page": "1",
+  "limit": "10",
+  "filters": [{"field": "userId", "value":1, "operator": "equals"}],
+  "sort": [{"field": "capacity", "order": "DESC"}]
+
+```
+**Responses:**
+
+```json
+{
+    "error": false,
+    "statusCode": 200,
+    "message": "Rooms retrieved successfully",
+    "data": {
+        "data": [
+            {
+                "id": 3,
+                "createdAt": "2024-05-25T15:35:01.750Z",
+                "updatedAt": "2024-05-25T15:35:01.750Z",
+                "deletedAt": null,
+                "name": "Workshop Room C",
+                "capacity": 20,
+                "userId": 1
+            },
+            {
+                "id": 23,
+                "createdAt": "2024-05-25T15:50:13.636Z",
+                "updatedAt": "2024-05-25T15:50:13.636Z",
+                "deletedAt": null,
+                "name": "Workshop Room C",
+                "capacity": 20,
+                "userId": 1
+            }
+        ],
+        "meta": {
+            "page": 1,
+            "limit": 2,
+            "itemCount": 12,
+            "pageCount": 6,
+            "hasNext": true,
+            "hasPrevious": false
+        }
+    }
+}
+```
 ## License
 Nest is [MIT licensed](LICENSE).
