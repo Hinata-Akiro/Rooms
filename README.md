@@ -8,6 +8,7 @@ This project provides a utility module for adding pagination, filtering, and sor
   - [Environment configuration](#environment-configuration)
   - [Running the app](#running-the-app)
   - [Swagger Doc](#swagger-doc)
+  - [Live Link](#live-link)
 - [API Endpoints](#api-endpoints)
   - [Rooms Endpoints](#rooms-endpoints)
     - [Get Rooms](#get-rooms)
@@ -45,6 +46,12 @@ $ yarn run start:dev
 # production mode
 $ yarn run start:prod
 ```
+
+### Live Link
+   ```plaintext
+     [live-link](https://rooms-2jb4.onrender.com)
+   ```
+
 ### Swagger Doc
    ```bash
      http://localhost:3000/api/docs
