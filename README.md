@@ -54,7 +54,7 @@ $ yarn run start:prod
 
 ### Swagger Doc
    ```bash
-     http://localhost:3000/api/docs
+     http://localhost:3000/api/docs or https://rooms-2jb4.onrender.com/api/docs
    ```
 
 ## Test
