@@ -7,8 +7,9 @@ This project provides a utility module for adding pagination, filtering, and sor
   - [Installation](#installation)
   - [Environment configuration](#environment-configuration)
   - [Running the app](#running-the-app)
-  - [Swagger Doc](#swagger-doc)
   - [Live Link](#live-link)
+  - [Swagger Doc](#swagger-doc)
+  - [PostMan Doc](#postman-doc)
 - [API Endpoints](#api-endpoints)
   - [Rooms Endpoints](#rooms-endpoints)
     - [Get Rooms](#get-rooms)
@@ -56,7 +57,10 @@ $ yarn run start:prod
    ```bash
      http://localhost:3000/api/docs or https://rooms-2jb4.onrender.com/api/docs
    ```
-
+### PostMan Doc
+   ```bash
+    https://documenter.getpostman.com/view/28059866/2sA3QqhYvw
+   ```
 ## Test
 
 ```bash
