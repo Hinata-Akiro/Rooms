@@ -1,12 +1,18 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsIn,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
+import { filterField } from '../enum';
 
 export class SortDto {
   @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
+  @IsEnum(filterField)
   @IsNotEmpty()
-  field: string;
+  sortField: string;
 
   @ApiPropertyOptional()
   @IsOptional()

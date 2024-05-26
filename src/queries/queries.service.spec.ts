@@ -42,8 +42,8 @@ describe('QueriesService', () => {
   describe('applyFilters', () => {
     it('should apply filters to the query', () => {
       const filters: FilterDto[] = [
-        { field: 'name', operator: Filters.LIKE, value: 'test' },
-        { field: 'capacity', operator: Filters.GTE, value: '10' },
+        { filterField: 'name', operator: Filters.LIKE, value: 'test' },
+        { filterField: 'capacity', operator: Filters.GTE, value: '10' },
       ];
 
       const addFilterConditionSpy = jest.spyOn<any, any>(
@@ -72,8 +72,8 @@ describe('QueriesService', () => {
   describe('applySorting', () => {
     it('should apply sorting to the query', () => {
       const sort: SortDto[] = [
-        { field: 'name', order: 'ASC' },
-        { field: 'capacity', order: 'DESC' },
+        { sortField: 'name', order: 'ASC' },
+        { sortField: 'capacity', order: 'DESC' },
       ];
 
       service.applySorting(queryBuilder, sort);

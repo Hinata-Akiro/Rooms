@@ -50,25 +50,24 @@ describe('RoomsService', () => {
           name: 'Room A',
           capacity: 10,
           userId: 1,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
         },
       ];
       const itemCount = 1;
 
-      jest.spyOn(roomsRepository, 'createQueryBuilder').mockReturnValue({
+      const createQueryBuilderMock = {
         getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applyFilters').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applySorting').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applyPagination').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      };
+
+      jest
+        .spyOn(roomsRepository, 'createQueryBuilder')
+        .mockReturnValue(createQueryBuilderMock as any);
 
       const result: ApiResponse<PaginationResultDto<Rooms>> =
         await service.getRooms(paginationDto, filters, sortD);
@@ -86,18 +85,17 @@ describe('RoomsService', () => {
       const rooms: Rooms[] = [];
       const itemCount = 0;
 
-      jest.spyOn(roomsRepository, 'createQueryBuilder').mockReturnValue({
+      const createQueryBuilderMock = {
         getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applyFilters').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applySorting').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applyPagination').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      };
+
+      jest
+        .spyOn(roomsRepository, 'createQueryBuilder')
+        .mockReturnValue(createQueryBuilderMock as any);
 
       const result: ApiResponse<PaginationResultDto<Rooms>> =
         await service.getRooms(paginationDto, filters, sortD);
@@ -125,123 +123,197 @@ describe('RoomsService', () => {
       expect(result.message).toEqual('Something went wrong');
       expect(result.statusCode).toEqual(500);
     });
+  });
+  it('should apply pagination logic correctly', async () => {
+    const paginationDto: PaginationDto = { page: 1, limit: 10 };
+    const filters: FilterDto[] = [];
+    const sortD: SortDto[] = [];
+    const rooms: Rooms[] = [
+      {
+        id: 1,
+        name: 'Room A',
+        capacity: 10,
+        userId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+    ];
+    const itemCount = 1;
 
-    it('should return rooms with applied filters and sorting', async () => {
-      const paginationDto: PaginationDto = { page: 0, limit: 10 };
-      const filters: FilterDto[] = [
-        { field: 'userId', value: '1', operator: Filters.EQUALS },
-      ];
-      const sortD: SortDto[] = [{ field: 'capacity', order: 'DESC' }];
-      const rooms: Rooms[] = [
-        {
-          id: 3,
-          name: 'Workshop Room C',
-          capacity: 20,
-          userId: 1,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
-        },
-        {
-          id: 1,
-          name: 'Room A',
-          capacity: 10,
-          userId: 1,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
-        },
-      ];
-      const itemCount = rooms.length;
+    const createQueryBuilderMock = {
+      getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+    };
 
-      jest.spyOn(roomsRepository, 'createQueryBuilder').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest
-        .spyOn(queriesService, 'applyFilters')
-        .mockImplementation((query, filters) => {
-          expect(filters).toEqual([
-            { field: 'userId', value: '1', operator: Filters.EQUALS },
-          ]);
-          return query;
-        });
-      jest
-        .spyOn(queriesService, 'applySorting')
-        .mockImplementation((query, sortD) => {
-          expect(sortD).toEqual([{ field: 'capacity', order: 'DESC' }]);
-          return query;
-        });
-      jest.spyOn(queriesService, 'applyPagination').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
+    jest
+      .spyOn(roomsRepository, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
 
-      const result: ApiResponse<PaginationResultDto<Rooms>> =
-        await service.getRooms(paginationDto, filters, sortD);
+    jest
+      .spyOn(queriesService, 'applyPagination')
+      .mockReturnValue(createQueryBuilderMock as any);
 
-      expect(result.data.data).toEqual(rooms);
-      expect(result.data.meta.itemCount).toEqual(itemCount);
-      expect(result.message).toEqual('Rooms retrieved successfully');
-      expect(result.statusCode).toEqual(200);
-    });
+    const result: ApiResponse<PaginationResultDto<Rooms>> =
+      await service.getRooms(paginationDto, filters, sortD);
 
-    it('should return rooms with applied sorting', async () => {
-      const paginationDto: PaginationDto = { page: 0, limit: 10 };
-      const filters: FilterDto[] = [];
-      const sortD: SortDto[] = [{ field: 'name', order: 'ASC' }];
-      const rooms: Rooms[] = [
-        {
-          id: 3,
-          name: 'Workshop Room C',
-          capacity: 20,
-          userId: 1,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
-        },
-        {
-          id: 2,
-          name: 'Meeting Room B',
-          capacity: 8,
-          userId: 2,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
-        },
-        {
-          id: 1,
-          name: 'Room A',
-          capacity: 10,
-          userId: 1,
-          createdAt: undefined,
-          updatedAt: undefined,
-          deletedAt: undefined,
-        },
-      ];
-      const itemCount = rooms.length;
+    expect(result.data.data).toEqual(rooms);
+    expect(result.data.meta.itemCount).toEqual(itemCount);
+    expect(result.message).toEqual('Rooms retrieved successfully');
+    expect(result.statusCode).toEqual(200);
+    expect(queriesService.applyPagination).toHaveBeenCalledWith(
+      createQueryBuilderMock,
+      paginationDto,
+    );
+  });
+  it('should apply filters and sorting correctly together', async () => {
+    const paginationDto: PaginationDto = { page: 1, limit: 10 };
+    const filters: FilterDto[] = [
+      { filterField: 'name', operator: Filters.EQUALS, value: 'Room A' },
+    ];
+    const sortD: SortDto[] = [{ sortField: 'name', order: 'ASC' }];
+    const rooms: Rooms[] = [
+      {
+        id: 1,
+        name: 'Room A',
+        capacity: 10,
+        userId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+    ];
+    const itemCount = 1;
 
-      jest.spyOn(roomsRepository, 'createQueryBuilder').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest.spyOn(queriesService, 'applyFilters').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
-      jest
-        .spyOn(queriesService, 'applySorting')
-        .mockImplementation((query, sortD) => {
-          expect(sortD).toEqual([{ field: 'name', order: 'ASC' }]);
-          return query;
-        });
-      jest.spyOn(queriesService, 'applyPagination').mockReturnValue({
-        getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
-      } as any);
+    const createQueryBuilderMock = {
+      getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+    };
 
-      const result: ApiResponse<PaginationResultDto<Rooms>> =
-        await service.getRooms(paginationDto, filters, sortD);
+    jest
+      .spyOn(roomsRepository, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
 
-      expect(result.data.data).toEqual(rooms);
-      expect(result.data.meta.itemCount).toEqual(itemCount);
-      expect(result.message).toEqual('Rooms retrieved successfully');
-      expect(result.statusCode).toEqual(200);
-    });
+    jest
+      .spyOn(queriesService, 'applyFilters')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    jest
+      .spyOn(queriesService, 'applySorting')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    const result: ApiResponse<PaginationResultDto<Rooms>> =
+      await service.getRooms(paginationDto, filters, sortD);
+
+    expect(result.data.data).toEqual(rooms);
+    expect(result.data.meta.itemCount).toEqual(itemCount);
+    expect(result.message).toEqual('Rooms retrieved successfully');
+    expect(result.statusCode).toEqual(200);
+    expect(queriesService.applyFilters).toHaveBeenCalledWith(
+      createQueryBuilderMock,
+      filters,
+    );
+    expect(queriesService.applySorting).toHaveBeenCalledWith(
+      createQueryBuilderMock,
+      sortD,
+    );
+  });
+  it('should apply sorting correctly', async () => {
+    const paginationDto: PaginationDto = { page: 1, limit: 10 };
+    const filters: FilterDto[] = [];
+    const sortD: SortDto[] = [{ sortField: 'name', order: 'ASC' }];
+    const rooms: Rooms[] = [
+      {
+        id: 1,
+        name: 'Room A',
+        capacity: 10,
+        userId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+    ];
+    const itemCount = 1;
+
+    const createQueryBuilderMock = {
+      getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+    };
+
+    jest
+      .spyOn(roomsRepository, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    jest
+      .spyOn(queriesService, 'applySorting')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    const result: ApiResponse<PaginationResultDto<Rooms>> =
+      await service.getRooms(paginationDto, filters, sortD);
+
+    expect(result.data.data).toEqual(rooms);
+    expect(result.data.meta.itemCount).toEqual(itemCount);
+    expect(result.message).toEqual('Rooms retrieved successfully');
+    expect(result.statusCode).toEqual(200);
+    expect(queriesService.applySorting).toHaveBeenCalledWith(
+      createQueryBuilderMock,
+      sortD,
+    );
+  });
+  it('should apply filters correctly', async () => {
+    const paginationDto: PaginationDto = { page: 1, limit: 10 };
+    const filters: FilterDto[] = [
+      { filterField: 'name', operator: Filters.EQUALS, value: 'Room A' },
+    ];
+    const sortD: SortDto[] = [];
+    const rooms: Rooms[] = [
+      {
+        id: 1,
+        name: 'Room A',
+        capacity: 10,
+        userId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+    ];
+    const itemCount = 1;
+
+    const createQueryBuilderMock = {
+      getManyAndCount: jest.fn().mockResolvedValue([rooms, itemCount]),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+    };
+
+    jest
+      .spyOn(roomsRepository, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    jest
+      .spyOn(queriesService, 'applyFilters')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    const result: ApiResponse<PaginationResultDto<Rooms>> =
+      await service.getRooms(paginationDto, filters, sortD);
+
+    expect(result.data.data).toEqual(rooms);
+    expect(result.data.meta.itemCount).toEqual(itemCount);
+    expect(result.message).toEqual('Rooms retrieved successfully');
+    expect(result.statusCode).toEqual(200);
+    expect(queriesService.applyFilters).toHaveBeenCalledWith(
+      createQueryBuilderMock,
+      filters,
+    );
   });
 });

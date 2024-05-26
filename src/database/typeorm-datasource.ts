@@ -9,7 +9,6 @@ export const options: DataSourceOptions = {
   entities: [Rooms],
   migrations: [path.join(__dirname, '/../**/migrations/*{.ts,.js}')],
   synchronize: false,
-  logging: true,
   ssl: {
     rejectUnauthorized: false,
   },

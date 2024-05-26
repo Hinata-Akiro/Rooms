@@ -19,8 +19,8 @@ export class QueriesService {
     filters: FilterDto[],
   ): SelectQueryBuilder<T> {
     filters.forEach((filter) => {
-      const { field, operator, value } = filter;
-      this.addFilterCondition(queryBuilder, field, operator, value);
+      const { filterField, operator, value } = filter;
+      this.addFilterCondition(queryBuilder, filterField, operator, value);
     });
     return queryBuilder;
   }
@@ -30,7 +30,10 @@ export class QueriesService {
     sort: SortDto[],
   ): SelectQueryBuilder<T> {
     sort.forEach((s) => {
-      queryBuilder.addOrderBy(`"${queryBuilder.alias}"."${s.field}"`, s.order);
+      queryBuilder.addOrderBy(
+        `"${queryBuilder.alias}"."${s.sortField}"`,
+        s.order,
+      );
     });
     return queryBuilder;
   }

@@ -11,3 +11,9 @@ export enum Filters {
   IS_NULL = 'isNull',
   IS_NOT_NULL = 'isNotNull',
 }
+
+export enum filterField {
+  userId = 'userId',
+  capacity = 'capacity',
+  name = 'name',
+}
