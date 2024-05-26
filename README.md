@@ -61,11 +61,60 @@ $ yarn run test
 
 ### Rooms Endpoints
 
-**Endpoint:** `/rooms`
+**Endpoint:** `api/v1/rooms`
 
 **Method:** `GET`
 
 **Description:** get all rooms.
 
+**Request Query:**
+
+```json
+
+  "page": "1",
+  "limit": "10",
+  "filters": [{"field": "userId", "value":1, "operator": "equals"}],
+  "sort": [{"field": "capacity", "order": "DESC"}]
+
+```
+**Responses:**
+
+```json
+{
+    "error": false,
+    "statusCode": 200,
+    "message": "Rooms retrieved successfully",
+    "data": {
+        "data": [
+            {
+                "id": 3,
+                "createdAt": "2024-05-25T15:35:01.750Z",
+                "updatedAt": "2024-05-25T15:35:01.750Z",
+                "deletedAt": null,
+                "name": "Workshop Room C",
+                "capacity": 20,
+                "userId": 1
+            },
+            {
+                "id": 23,
+                "createdAt": "2024-05-25T15:50:13.636Z",
+                "updatedAt": "2024-05-25T15:50:13.636Z",
+                "deletedAt": null,
+                "name": "Workshop Room C",
+                "capacity": 20,
+                "userId": 1
+            }
+        ],
+        "meta": {
+            "page": 1,
+            "limit": 2,
+            "itemCount": 12,
+            "pageCount": 6,
+            "hasNext": true,
+            "hasPrevious": false
+        }
+    }
+}
+```
 ## License
 Nest is [MIT licensed](LICENSE).
