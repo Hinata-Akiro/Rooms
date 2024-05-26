@@ -49,7 +49,7 @@ $ yarn run start:prod
 
 ### Live Link
    ```plaintext
-     [live-link](https://rooms-2jb4.onrender.com)
+     [live-link](https://rooms-2jb4.onrender.com/api/v1)
    ```
 
 ### Swagger Doc
@@ -68,7 +68,7 @@ $ yarn run test
 
 ### Rooms Endpoints
 
-**Endpoint:** `api/v1/rooms`
+**Endpoint:** `/rooms`
 
 **Method:** `GET`
 
