@@ -24,6 +24,14 @@ export class RoomsService {
     private roomsRepository: Repository<Rooms>,
   ) {}
 
+  /**
+   * Retrieves a list of rooms based on pagination, filters, and sorting options.
+   *
+   * @param paginationDto - Pagination options.
+   * @param filters - Array of filter options.
+   * @param sortD - Array of sorting options.
+   * @returns A Promise that resolves to an ApiResponse containing the paginated list of rooms.
+   */
   async getRooms(
     paginationDto: PaginationDto,
     filters?: FilterDto[],
