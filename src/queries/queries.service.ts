@@ -30,6 +30,7 @@ export class QueriesService {
     queryBuilder.skip((page - 1) * limit).take(limit);
     return queryBuilder;
   }
+
   /**
    * Applies filters to a TypeORM SelectQueryBuilder.
    *
