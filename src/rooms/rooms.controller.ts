@@ -1,5 +1,5 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoomsService } from './rooms.service';
 import { PaginationDto, FilterDto, SortDto } from '../common/dto';
 
@@ -15,22 +15,33 @@ export class RoomsController {
     description: 'List of rooms returned successfully.',
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiQuery({
+    name: 'filters',
+    type: String,
+    required: false,
+    description: 'Filter criteria for querying rooms',
+  })
+  @ApiQuery({
+    name: 'sort',
+    type: String,
+    required: false,
+    description: 'Sort criteria for querying rooms',
+  })
   async getRooms(
     @Query() paginationDto: PaginationDto,
-    @Query() filters?: FilterDto,
-    @Query() sort?: SortDto,
+    @Query('filters') filters: string,
+    @Query('sort') sort: string,
   ) {
-    const filterArray = filters
-      ? Object.keys(filters).length === 0
-        ? []
-        : [filters]
-      : [];
+    let parsedFilters: FilterDto[];
+    let parsedSort: SortDto[];
 
-    const sortArray = sort
-      ? Object.keys(sort).length === 0
-        ? []
-        : [sort]
-      : [];
-    return this.roomsService.getRooms(paginationDto, filterArray, sortArray);
+    try {
+      parsedFilters = filters ? JSON.parse(filters) : [];
+      parsedSort = sort ? JSON.parse(sort) : [];
+    } catch (error) {
+      throw new BadRequestException('Invalid JSON format for filters or sort');
+    }
+
+    return this.roomsService.getRooms(paginationDto, parsedFilters, parsedSort);
   }
 }

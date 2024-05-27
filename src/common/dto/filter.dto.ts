@@ -1,13 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsEnum, IsOptional, IsNotEmpty } from 'class-validator';
-import { filterField, Filters } from '../enum';
+import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
+import { Filters } from '../enum';
 
 export class FilterDto {
   @ApiPropertyOptional()
   @IsOptional()
-  @IsEnum(filterField)
+  @IsString()
   @IsNotEmpty()
-  filterField: string;
+  field: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -16,7 +16,7 @@ export class FilterDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsString()
   @IsEnum(Filters)
-  @IsNotEmpty()
   operator: Filters;
 }

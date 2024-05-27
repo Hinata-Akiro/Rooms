@@ -44,8 +44,8 @@ export class QueriesService {
    * ```typescript
    * const queryBuilder = connection.getRepository(User).createQueryBuilder('user');
    * const filters = [
-   *   { filterField: 'name', operator: Filters.LIKE, value: 'John' },
-   *   { filterField: 'age', operator: Filters.GT, value: 30 },
+   *   { field: 'name', operator: Filters.LIKE, value: 'John' },
+   *   { field: 'age', operator: Filters.GT, value: 30 },
    * ];
    * const filteredQueryBuilder = queriesService.applyFilters(queryBuilder, filters);
    * ```
@@ -55,8 +55,8 @@ export class QueriesService {
     filters: FilterDto[],
   ): SelectQueryBuilder<T> {
     filters.forEach((filter) => {
-      const { filterField, operator, value } = filter;
-      this.addFilterCondition(queryBuilder, filterField, operator, value);
+      const { field, operator, value } = filter;
+      this.addFilterCondition(queryBuilder, field, operator, value);
     });
     return queryBuilder;
   }
@@ -75,8 +75,8 @@ export class QueriesService {
    * ```typescript
    * const queryBuilder = connection.getRepository(User).createQueryBuilder('user');
    * const sort = [
-   *   { sortField: 'name', order: 'ASC' },
-   *   { sortField: 'age', order: 'DESC' },
+   *   { field: 'name', order: 'ASC' },
+   *   { field: 'age', order: 'DESC' },
    * ];
    * const sortedQueryBuilder = queriesService.applySorting(queryBuilder, sort);
    * ```
@@ -86,10 +86,7 @@ export class QueriesService {
     sort: SortDto[],
   ): SelectQueryBuilder<T> {
     sort.forEach((s) => {
-      queryBuilder.addOrderBy(
-        `"${queryBuilder.alias}"."${s.sortField}"`,
-        s.order,
-      );
+      queryBuilder.addOrderBy(`"${queryBuilder.alias}"."${s.field}"`, s.order);
     });
     return queryBuilder;
   }

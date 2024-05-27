@@ -5,7 +5,6 @@ import { RoomsService } from './rooms.service';
 import { BadRequestException } from '@nestjs/common';
 import { PaginationDto, FilterDto, SortDto } from '../common/dto';
 import { ApiResponse } from '../common/response/response';
-import { Filters } from '../common/enum';
 
 describe('RoomsController', () => {
   let controller: RoomsController;
@@ -37,12 +36,8 @@ describe('RoomsController', () => {
   describe('getRooms', () => {
     it('should return a list of rooms with pagination and metadata', async () => {
       const paginationDto: PaginationDto = { page: 1, limit: 10 };
-      const filters = {
-        filterField: 'capacity',
-        operator: Filters.GTE,
-        value: '10',
-      };
-      const sort: SortDto = { sortField: 'name', order: 'ASC' };
+      const filters = '[{"field":"capacity","operator":"gte","value":10}]';
+      const sort = '[{"field":"name","order":"ASC"}]';
       const result: ApiResponse<any> = {
         statusCode: 200,
         message: 'Rooms retrieved successfully',
@@ -65,98 +60,45 @@ describe('RoomsController', () => {
         result,
       );
     });
-    it('should handle missing optional query parameters', async () => {
+
+    it('should throw a BadRequestException for invalid JSON in filters', async () => {
       const paginationDto: PaginationDto = { page: 1, limit: 10 };
-      const result: ApiResponse<any> = {
-        statusCode: 200,
-        message: 'Rooms retrieved successfully',
-        data: {
-          items: [{ id: 1, name: 'Room A', capacity: 10 }],
-          meta: {
-            totalItems: 1,
-            itemCount: 1,
-            itemsPerPage: 10,
-            totalPages: 1,
-            currentPage: 1,
-          },
-        },
-        error: false,
-      };
+      const filters = 'invalid-json';
+      const sort = '[{"field":"name","order":"ASC"}]';
 
-      mockRoomsService.getRooms.mockResolvedValue(result);
-
-      expect(await controller.getRooms(paginationDto)).toEqual(result);
-    });
-    it('should throw BadRequestException for invalid filter operator', async () => {
-      const paginationDto: PaginationDto = { page: 1, limit: 10 };
-      const filters = {
-        filterField: 'capacity',
-        operator: 'INVALID_OPERATOR' as Filters,
-        value: '10',
-      };
-      const sort: SortDto = { sortField: 'name', order: 'ASC' };
-
-      try {
-        await controller.getRooms(paginationDto, filters, sort);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      }
-    });
-    it('should throw BadRequestException for invalid pagination parameters', async () => {
-      const paginationDto: PaginationDto = { page: -1, limit: 10 };
-      const filters: FilterDto = undefined;
-      const sort: SortDto = undefined;
-
-      try {
-        await controller.getRooms(paginationDto, filters, sort);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      }
-    });
-    it('should handle sort parameter provided but filter parameter is empty', async () => {
-      const paginationDto: PaginationDto = { page: 1, limit: 10 };
-      const filters: FilterDto = undefined;
-      const sort: SortDto = { sortField: 'name', order: 'ASC' };
-      const result: ApiResponse<any> = {
-        statusCode: 200,
-        message: 'Rooms retrieved successfully',
-        data: {
-          items: [{ id: 1, name: 'Room A', capacity: 10 }],
-          meta: {
-            totalItems: 1,
-            itemCount: 1,
-            itemsPerPage: 10,
-            totalPages: 1,
-            currentPage: 1,
-          },
-        },
-        error: false,
-      };
-
-      mockRoomsService.getRooms.mockResolvedValue(result);
-
-      expect(await controller.getRooms(paginationDto, filters, sort)).toEqual(
-        result,
+      await expect(
+        controller.getRooms(paginationDto, filters, sort),
+      ).rejects.toThrow(
+        new BadRequestException('Invalid JSON format for filters or sort'),
       );
     });
-    it('should handle filter parameter provided but sort parameter is empty', async () => {
+
+    it('should throw a BadRequestException for invalid JSON in sort', async () => {
       const paginationDto: PaginationDto = { page: 1, limit: 10 };
-      const filters: FilterDto = {
-        filterField: 'capacity',
-        operator: Filters.GTE,
-        value: '10',
-      };
-      const sort: SortDto = undefined;
+      const filters = '[{"field":"capacity","operator":"gte","value":10}]';
+      const sort = 'invalid-json';
+
+      await expect(
+        controller.getRooms(paginationDto, filters, sort),
+      ).rejects.toThrow(
+        new BadRequestException('Invalid JSON format for filters or sort'),
+      );
+    });
+
+    it('should return an empty list when no filters and sort are provided', async () => {
+      const paginationDto: PaginationDto = { page: 1, limit: 10 };
+      const filters = '';
+      const sort = '';
       const result: ApiResponse<any> = {
         statusCode: 200,
         message: 'Rooms retrieved successfully',
         data: {
-          items: [{ id: 1, name: 'Room A', capacity: 10 }],
+          items: [],
           meta: {
-            totalItems: 1,
-            itemCount: 1,
+            totalItems: 0,
+            itemCount: 0,
             itemsPerPage: 10,
-            totalPages: 1,
+            totalPages: 0,
             currentPage: 1,
           },
         },
